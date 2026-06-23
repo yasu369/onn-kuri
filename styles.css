@@ -17,6 +17,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 92px;
 }
 
 body {
@@ -497,6 +498,10 @@ p {
   font-size: clamp(24px, 3vw, 34px);
   line-height: 1.3;
   letter-spacing: 0;
+}
+
+.price-category h2[id] {
+  scroll-margin-top: 100px;
 }
 
 .price-category h3 {
