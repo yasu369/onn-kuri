@@ -13,7 +13,7 @@ const types = {
 
 http.createServer((req, res) => {
   let pathname = decodeURIComponent(req.url.split("?")[0]);
-  if (pathname === "/") pathname = "/index.html";
+  if (pathname === "/" || pathname.endsWith("/")) pathname += "index.html";
   const file = path.join(root, pathname);
 
   if (!file.startsWith(root)) {
