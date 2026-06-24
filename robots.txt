@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yasu369.github.io/onn-kuri/sitemap.xml

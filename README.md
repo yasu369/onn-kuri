@@ -14,6 +14,13 @@ node serve.js
 
 `index.html`、各階層の `index.html`、`styles.css`、`script.js`、`config.js`、`assets/` をそのまま公開できます。
 
+## SEO公開準備
+
+- `sitemap.xml` と `robots.txt` を追加済みです。
+- 各ページに `canonical`、OGP、Twitterカード、構造化データを設定済みです。
+- 現在の正式URLは一時的に `https://yasu369.github.io/onn-kuri/` としています。
+- 独自ドメイン取得後は、HTML内の `canonical`、OGP URL、構造化データURL、`sitemap.xml`、`robots.txt` のURLを新ドメインへ差し替えてください。
+
 ## セキュリティ方針
 
 - `config.js` はブラウザで誰でも確認できる前提です。SendGrid、AWS、決済サービスなどの秘密鍵・APIトークン・パスワードは絶対に入れないでください。
