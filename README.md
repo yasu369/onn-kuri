@@ -8,11 +8,28 @@
 node serve.js
 ```
 
-ブラウザで `http://127.0.0.1:4173` を開いて確認できます。
+ブラウザで `http://127.0.0.1:4174` を開いて確認できます。
 
 ## GitHub Pages
 
-`index.html`、`styles.css`、`script.js`、`assets/` をそのまま公開できます。
+`index.html`、各階層の `index.html`、`styles.css`、`script.js`、`config.js`、`assets/` をそのまま公開できます。
+
+## セキュリティ方針
+
+- `config.js` はブラウザで誰でも確認できる前提です。SendGrid、AWS、決済サービスなどの秘密鍵・APIトークン・パスワードは絶対に入れないでください。
+- `config.js` に置くのは、LINE公式アカウントURL、note RSS URL、問い合わせ先メールアドレスなど、公開されても実害のない値だけです。
+- `config.js` の設定値は `Object.freeze` で固定し、ページ読み込み後に意図せず書き換わりにくい形にしています。
+- GitHub Pagesのサブディレクトリ公開に対応するため、サイト内リンク・画像・CSS・JSは先頭スラッシュを使わず、相対パスで記述します。
+
+## GitHubに公開する前のメール保護
+
+GitHubの `Settings` → `Emails` で `Keep my email addresses private` を有効にしてください。その後、GitのメールアドレスをGitHubが発行する非公開用メールに設定します。
+
+```powershell
+git config user.email "ユーザーID+ユーザー名@users.noreply.github.com"
+```
+
+既に本物のメールアドレスでコミットした履歴がある場合は、公開前に履歴修正が必要です。
 
 ## ページ構成
 
