@@ -21,6 +21,12 @@ node serve.js
 - 現在の正式URLは一時的に `https://yasu369.github.io/onn-kuri/` としています。
 - 独自ドメイン取得後は、HTML内の `canonical`、OGP URL、構造化データURL、`sitemap.xml`、`robots.txt` のURLを新ドメインへ差し替えてください。
 
+## 外部連携
+
+- 予約ボタンは `config.js` の `lineOfficialUrl` にURLを入れると、LINE公式アカウントへ遷移します。
+- トップページのお知らせは `news.json` を表示します。
+- `config.js` の `noteRssUrl` にnoteのRSS URLを入れると、GitHub Actionsが1時間ごとに `news.json` を更新します。
+
 ## セキュリティ方針
 
 - `config.js` はブラウザで誰でも確認できる前提です。SendGrid、AWS、決済サービスなどの秘密鍵・APIトークン・パスワードは絶対に入れないでください。
