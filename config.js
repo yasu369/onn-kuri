@@ -1,5 +1,5 @@
 window.ONCLINIC_CONFIG = Object.freeze({
-  lineOfficialUrl: "",
+  lineOfficialUrl: "https://lin.ee/PNBQpOa",
   noteRssUrl: "",
   noteNewsJsonUrl: "news.json",
   contactEmail: "info@double-k.co.jp",
