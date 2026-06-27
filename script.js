@@ -40,7 +40,7 @@ if (noteNewsRoot && config.noteNewsJsonUrl) {
     .then((items) => {
       if (!Array.isArray(items) || items.length === 0) return;
 
-      noteNewsRoot.innerHTML = items.slice(0, 3).map((item) => {
+      noteNewsRoot.innerHTML = items.slice(0, 5).map((item) => {
         const date = item.date || "";
         const displayDate = date.replaceAll("-", ".");
         const title = escapeHtml(item.title || "note更新");
