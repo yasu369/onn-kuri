@@ -428,7 +428,7 @@ p {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
-  gap: 20px;
+  gap: 18px 28px;
   padding: 34px clamp(20px, 6vw, 88px);
   color: var(--muted);
   border-top: 1px solid var(--line);
@@ -449,9 +449,18 @@ p {
   white-space: nowrap;
 }
 
-.site-footer p {
-  grid-column: 2;
-  max-width: 860px;
+.footer-info {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  max-width: 100%;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.footer-info span {
+  display: inline-block;
 }
 
 .page-hero {
@@ -792,8 +801,10 @@ tr:last-child td {
     white-space: normal;
   }
 
-  .site-footer p {
+  .footer-info {
     grid-column: auto;
+    flex-direction: column;
+    gap: 2px;
   }
 }
 
