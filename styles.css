@@ -426,9 +426,8 @@ p {
 
 .site-footer {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  justify-content: space-between;
-  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
   gap: 20px;
   padding: 34px clamp(20px, 6vw, 88px);
   color: var(--muted);
@@ -439,10 +438,20 @@ p {
 .footer-links {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 12px 18px;
   font-size: 13px;
   font-weight: 700;
+  min-width: 0;
+}
+
+.footer-links a {
+  white-space: nowrap;
+}
+
+.site-footer p {
+  grid-column: 2;
+  max-width: 860px;
 }
 
 .page-hero {
@@ -777,6 +786,14 @@ tr:last-child td {
 
   .footer-links {
     justify-content: flex-start;
+  }
+
+  .footer-links a {
+    white-space: normal;
+  }
+
+  .site-footer p {
+    grid-column: auto;
   }
 }
 
