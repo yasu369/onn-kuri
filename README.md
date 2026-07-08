@@ -18,8 +18,8 @@ node serve.js
 
 - `sitemap.xml` と `robots.txt` を追加済みです。
 - 各ページに `canonical`、OGP、Twitterカード、構造化データを設定済みです。
-- 現在の正式URLは一時的に `https://yasu369.github.io/onn-kuri/` としています。
-- 独自ドメイン取得後は、HTML内の `canonical`、OGP URL、構造化データURL、`sitemap.xml`、`robots.txt` のURLを新ドメインへ差し替えてください。
+- 現在の正式URLは `https://www.onn-clinic.jp/` としています。
+- 独自ドメインを変更する場合は、HTML内の `canonical`、OGP URL、構造化データURL、`sitemap.xml`、`robots.txt` のURLを新ドメインへ差し替えてください。
 
 ## 外部連携
 
