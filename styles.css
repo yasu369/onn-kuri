@@ -530,6 +530,7 @@ p {
 }
 
 .table-wrap {
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -828,5 +829,38 @@ tr:last-child td {
 
   .flow-list li {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .table-wrap {
+    padding-top: 38px;
+  }
+
+  .table-wrap::before {
+    content: "左右にスクロールできます";
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    background: #f4fffb;
+    color: var(--green-dark);
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .table-wrap::after {
+    content: "";
+    position: absolute;
+    top: 38px;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 34px;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(24,168,137,.18));
   }
 }
