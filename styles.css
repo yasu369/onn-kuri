@@ -864,3 +864,17 @@ tr:last-child td {
     background: linear-gradient(90deg, rgba(255,255,255,0), rgba(24,168,137,.18));
   }
 }
+
+.treatment-links {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.treatment-links a {
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .treatment-links {
+    grid-template-columns: 1fr;
+  }
+}
