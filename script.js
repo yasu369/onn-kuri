@@ -32,15 +32,15 @@ if (config.contactEmail) {
   });
 }
 
-const noteNewsRoot = document.querySelector("[data-note-news]");
+const notePostsRoot = document.querySelector("[data-note-posts]");
 
-if (noteNewsRoot && config.noteNewsJsonUrl) {
+if (notePostsRoot && config.noteNewsJsonUrl) {
   fetch(config.noteNewsJsonUrl, { cache: "no-store" })
     .then((response) => (response.ok ? response.json() : null))
     .then((items) => {
       if (!Array.isArray(items) || items.length === 0) return;
 
-      noteNewsRoot.innerHTML = items.slice(0, 5).map((item) => {
+      notePostsRoot.innerHTML = items.slice(0, 5).map((item) => {
         const date = item.date || "";
         const displayDate = date.replaceAll("-", ".");
         const title = escapeHtml(item.title || "note更新");
