@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" role="img" aria-labelledby="title desc">
+  <title id="title">Onn-Clinic logo</title>
+  <desc id="desc">ON mark with a medical cross and Onn-Clinic wordmark</desc>
+  <defs>
+    <linearGradient id="mark" x1="12" y1="8" x2="62" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#18a889"/>
+      <stop offset="1" stop-color="#087861"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="72" fill="none"/>
+  <g>
+    <circle cx="36" cy="36" r="30" fill="url(#mark)"/>
+    <circle cx="36" cy="36" r="26" fill="none" stroke="#ffffff" stroke-opacity=".28" stroke-width="2"/>
+    <text x="20" y="43" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800" letter-spacing="-1">ON</text>
+    <rect x="47" y="17" width="4" height="16" rx="2" fill="#ffffff"/>
+    <rect x="41" y="23" width="16" height="4" rx="2" fill="#ffffff"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="78" y="35" fill="#087861" font-size="23" font-weight="800" letter-spacing=".2">Onn-Clinic</text>
+    <text x="80" y="54" fill="#5f746f" font-size="12" font-weight="700" letter-spacing="1.2">ONLINE MEDICAL CARE</text>
+  </g>
+</svg>

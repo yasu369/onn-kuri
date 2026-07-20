@@ -63,17 +63,26 @@ img {
 }
 
 .brand-mark {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  overflow: hidden;
+  color: transparent;
   border-radius: 50%;
-  color: var(--white);
-  background: var(--green);
-  font-size: 28px;
+  background: url("assets/logo.svg") left center / auto 46px no-repeat;
+  font-size: 0;
   line-height: 1;
 }
 
+.brand-name small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
 .site-nav {
   display: flex;
   align-items: center;
