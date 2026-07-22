@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --green: #18a889;
   --green-dark: #087861;
   --mint: #e8f8f3;
@@ -907,3 +907,32 @@ tr:last-child td {
 @media (max-width: 520px) { .contact-actions .button { width: 100%; } }
 
 .contact-urgent { margin-top: 10px; color: var(--green-dark); font-weight: 900; }
+
+.detail-flow-section .section-heading {
+  text-align: left;
+}
+
+.detail-flow {
+  max-width: 1040px;
+}
+
+.detail-flow article {
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: clamp(24px, 3.5vw, 36px) clamp(22px, 5vw, 48px);
+}
+
+.detail-flow span {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff4ef;
+  line-height: 1;
+}
+
+.detail-flow p {
+  max-width: 820px;
+  margin: 0;
+  line-height: 1.9;
+}
