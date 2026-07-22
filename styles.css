@@ -899,3 +899,5 @@ tr:last-child td {
 .drug-photo-note { padding: 10px 12px; border: 1px dashed rgba(8, 120, 97, .35); border-radius: 8px; background: #f4fffb; color: var(--green-dark); font-size: 13px; font-weight: 800; text-align: center; }
 .source-list a { color: var(--green-dark); font-weight: 900; }
 @media (max-width: 820px) { .drug-card-grid { grid-template-columns: 1fr; } }
+
+.drug-photo-note span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 700; }
