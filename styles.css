@@ -901,3 +901,7 @@ tr:last-child td {
 @media (max-width: 820px) { .drug-card-grid { grid-template-columns: 1fr; } }
 
 .drug-photo-note span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 700; }
+
+.contact-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.contact-note { margin-top: 16px; color: var(--muted); font-size: 14px; }
+@media (max-width: 520px) { .contact-actions .button { width: 100%; } }
