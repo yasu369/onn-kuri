@@ -905,3 +905,5 @@ tr:last-child td {
 .contact-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .contact-note { margin-top: 16px; color: var(--muted); font-size: 14px; }
 @media (max-width: 520px) { .contact-actions .button { width: 100%; } }
+
+.contact-urgent { margin-top: 10px; color: var(--green-dark); font-weight: 900; }
