@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>オンクリ 動画書き出し</title>
+  <style>
+    :root { --ink: #1d2b28; --muted: #66736f; --green: #176b55; --coral: #f47d67; --line: #d8e5df; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: #f5f8f6; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; }
+    main { width: min(1080px, calc(100% - 24px)); margin: 0 auto; padding: 24px 0 40px; }
+    h1 { margin: 0; font-size: clamp(24px, 4vw, 38px); }
+    .lead { max-width: 760px; color: var(--muted); line-height: 1.75; }
+    .stage { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: 0 14px 40px rgb(35 74 61 / 10%); }
+    canvas { display: block; width: 100%; height: auto; background: #eaf5ef; }
+    .controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; padding: 14px; border-top: 1px solid var(--line); }
+    button, a { min-height: 40px; padding: 8px 16px; border: 1px solid var(--green); border-radius: 999px; color: #fff; background: var(--green); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+    button.secondary, a.secondary { color: var(--green); background: #fff; }
+    button:disabled { opacity: .5; cursor: wait; }
+    .status { margin-left: auto; color: var(--muted); font-size: 14px; }
+    .note { margin-top: 16px; padding: 14px 16px; border-left: 4px solid var(--coral); color: var(--muted); background: #fff8f5; line-height: 1.7; }
+    .download { display: none; margin-top: 12px; }
+    .download.is-visible { display: inline-flex; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>オンクリ動画の映像書き出し</h1>
+    <p class="lead">150秒版の映像と字幕をキャンバスに描画し、ブラウザからWebM形式で保存します。音声は含まれないため、保存後にナレーションとBGMを動画編集ソフトで追加してください。</p>
+    <div class="stage">
+      <canvas id="canvas" width="1280" height="720" aria-label="オンクリ動画プレビュー"></canvas>
+      <div class="controls">
+        <button id="start" type="button">映像を書き出す</button>
+        <button id="stop" class="secondary" type="button" disabled>停止</button>
+        <button id="reset" class="secondary" type="button">最初から</button>
+        <a class="secondary" href="./">確認用ドラフトへ</a>
+        <span class="status" id="status">待機中 0:00 / 2:30</span>
+      </div>
+    </div>
+    <a id="download" class="download" download="onn-clinic-guide-visual.webm">WebMをダウンロード</a>
+    <p class="note">録画中はこのページを閉じないでください。150秒の実時間で書き出されます。最終公開前に、診療費・配送条件・副作用・禁忌の表現を医療機関側で確認してください。</p>
+  </main>
+  <script>
+    const scenes = [
+      { start: 0, end: 15, image: "../video-assets/consultation.png", kicker: "0:00 - 0:15", caption: "通院せず、スマホで医師に相談。" },
+      { start: 15, end: 28, image: "../video-assets/consultation.png", kicker: "0:15 - 0:28", caption: "診療メニューから、自分に合う内容を確認。" },
+      { start: 28, end: 48, image: "../video-assets/reservation.png", kicker: "0:28 - 0:48", caption: "公式LINEから予約。問診に回答します。" },
+      { start: 48, end: 75, image: "../video-assets/consultation.png", kicker: "0:48 - 1:15", caption: "医師が健康状態や、併用薬を確認します。" },
+      { start: 75, end: 97, image: "../video-assets/reservation.png", kicker: "1:15 - 1:37", caption: "診察料は0円。4,201円以上は送料無料。" },
+      { start: 97, end: 118, image: "../video-assets/delivery.png", kicker: "1:37 - 1:58", caption: "ご自宅へお届け。冷蔵品はクール便です。" },
+      { start: 118, end: 137, image: "../video-assets/delivery.png", kicker: "1:58 - 2:17", caption: "定期購入なし。必要な分だけご注文。" },
+      { start: 137, end: 150, image: "../video-assets/consultation.png", kicker: "2:17 - 2:30", caption: "注意点を確認して、公式LINEから予約。" }
+    ];
+    const canvas = document.querySelector("#canvas");
+    const ctx = canvas.getContext("2d");
+    const startButton = document.querySelector("#start");
+    const stopButton = document.querySelector("#stop");
+    const resetButton = document.querySelector("#reset");
+    const status = document.querySelector("#status");
+    const download = document.querySelector("#download");
+    const images = new Map();
+    let currentTime = 0;
+    let startedAt = 0;
+    let animationFrame = 0;
+    let recorder = null;
+    let chunks = [];
+
+    const formatTime = (seconds) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+    const sceneFor = (seconds) => scenes.find((scene) => seconds >= scene.start && seconds < scene.end) || scenes[scenes.length - 1];
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = src;
+      });
+    }
+
+    async function loadImages() {
+      await Promise.all(scenes.map(async (scene) => {
+        if (!images.has(scene.image)) images.set(scene.image, await loadImage(scene.image));
+      }));
+    }
+
+    function drawCover(image) {
+      const scale = Math.max(canvas.width / image.width, canvas.height / image.height);
+      const width = image.width * scale;
+      const height = image.height * scale;
+      ctx.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+    }
+
+    function drawWrapped(text, x, y, maxWidth, lineHeight) {
+      const characters = [...text];
+      let line = "";
+      let offset = 0;
+      for (const character of characters) {
+        const next = line + character;
+        if (ctx.measureText(next).width > maxWidth && line) {
+          ctx.fillText(line, x, y + offset);
+          line = character;
+          offset += lineHeight;
+        } else {
+          line = next;
+        }
+      }
+      if (line) ctx.fillText(line, x, y + offset);
+      return offset + lineHeight;
+    }
+
+    function draw() {
+      const scene = sceneFor(currentTime);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawCover(images.get(scene.image));
+      ctx.fillStyle = "rgb(13 35 29 / 68%)";
+      ctx.fillRect(0, canvas.height * .62, canvas.width, canvas.height * .38);
+      ctx.fillStyle = "#c9f3df";
+      ctx.font = "700 24px system-ui, sans-serif";
+      ctx.fillText(scene.kicker, 64, canvas.height - 170);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 52px system-ui, sans-serif";
+      drawWrapped(scene.caption, 64, canvas.height - 106, canvas.width - 128, 68);
+      status.textContent = `${recorder?.state === "recording" ? "書き出し中" : "待機中"} ${formatTime(currentTime)} / 2:30`;
+    }
+
+    function reset() {
+      cancelAnimationFrame(animationFrame);
+      currentTime = 0;
+      draw();
+    }
+
+    function finishRecording() {
+      cancelAnimationFrame(animationFrame);
+      startButton.disabled = false;
+      stopButton.disabled = true;
+      if (!chunks.length) return;
+      const blob = new Blob(chunks, { type: recorder?.mimeType || "video/webm" });
+      download.href = URL.createObjectURL(blob);
+      download.classList.add("is-visible");
+      status.textContent = `完了 ${formatTime(currentTime)} / 2:30`;
+    }
+
+    function animate(now) {
+      currentTime = Math.min(150, (now - startedAt) / 1000);
+      draw();
+      if (currentTime >= 150) {
+        recorder.stop();
+        return;
+      }
+      animationFrame = requestAnimationFrame(animate);
+    }
+
+    async function startRecording() {
+      await loadImages();
+      download.classList.remove("is-visible");
+      chunks = [];
+      const stream = canvas.captureStream(30);
+      const preferred = "video/webm;codecs=vp9";
+      recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported(preferred) ? { mimeType: preferred } : undefined);
+      recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+      recorder.onstop = finishRecording;
+      recorder.start(1000);
+      startButton.disabled = true;
+      stopButton.disabled = false;
+      startedAt = performance.now();
+      animationFrame = requestAnimationFrame(animate);
+    }
+
+    startButton.addEventListener("click", () => startRecording().catch(() => { status.textContent = "素材の読み込みに失敗しました"; }));
+    stopButton.addEventListener("click", () => { if (recorder?.state === "recording") recorder.stop(); });
+    resetButton.addEventListener("click", reset);
+    loadImages().then(draw).catch(() => { status.textContent = "素材の読み込みに失敗しました"; });
+  </script>
+</body>
+</html>
