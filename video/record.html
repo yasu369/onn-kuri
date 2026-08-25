@@ -34,12 +34,13 @@
         <button id="start" type="button">映像を書き出す</button>
         <button id="stop" class="secondary" type="button" disabled>停止</button>
         <button id="reset" class="secondary" type="button">最初から</button>
+        <button id="speak" class="secondary" type="button">ナレーション試聴</button>
         <a class="secondary" href="./">確認用ドラフトへ</a>
         <span class="status" id="status">待機中 0:00 / 2:30</span>
       </div>
     </div>
     <a id="download" class="download" download="onn-clinic-guide-visual.webm">WebMをダウンロード</a>
-    <p class="note">録画中はこのページを閉じないでください。150秒の実時間で書き出されます。最終公開前に、診療費・配送条件・副作用・禁忌の表現を医療機関側で確認してください。</p>
+    <p class="note">録画中はこのページを閉じないでください。150秒の実時間で書き出されます。「ナレーション試聴」はブラウザ確認用で、WebMには音声を埋め込みません。最終公開前に、診療費・配送条件・副作用・禁忌の表現を医療機関側で確認してください。</p>
   </main>
   <script>
     const scenes = [
@@ -57,6 +58,7 @@
     const startButton = document.querySelector("#start");
     const stopButton = document.querySelector("#stop");
     const resetButton = document.querySelector("#reset");
+    const speakButton = document.querySelector("#speak");
     const status = document.querySelector("#status");
     const download = document.querySelector("#download");
     const images = new Map();
@@ -65,6 +67,8 @@
     let animationFrame = 0;
     let recorder = null;
     let chunks = [];
+
+    const narration = `通院せず、スマホで医師に相談。オンクリは、自宅から利用できるオンライン診療サービスです。診察料は0円。お薬代が4,201円以上の場合は送料無料で、定期購入もありません。ダイエット、AGA、低用量ピル、ED、肌のお悩みなど、診療メニューをご確認ください。予約ボタンから公式LINEへ進み、希望する診療内容を選択します。続いて、問診に回答してください。入力内容をもとに、診察の準備を行います。オンラインで医師が診察します。体調、既往歴、アレルギー、服用中のお薬などを確認し、安全性を考えたうえで処方を判断します。診察の結果、処方できない場合もあります。診察料は、初診・再診ともに0円です。お薬代が4,201円以上の場合は送料無料。4,200円以下の場合は、送料550円がかかります。内容を確認して、お支払いへ進みます。お薬はご自宅へお届けします。中身が分かりにくい梱包に配慮し、冷蔵品は品質管理のためクール便でお届けします。定期購入の契約はありません。医師の診察で処方が決まった場合に、必要なタイミングで必要な分だけご注文いただけます。副作用や注意点、服用できない場合については、診察時の案内と各薬剤の説明をご確認ください。ご予約・お問い合わせは、オンクリ公式LINEからどうぞ。`;
 
     const formatTime = (seconds) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
     const sceneFor = (seconds) => scenes.find((scene) => seconds >= scene.start && seconds < scene.end) || scenes[scenes.length - 1];
@@ -170,6 +174,22 @@
     startButton.addEventListener("click", () => startRecording().catch(() => { status.textContent = "素材の読み込みに失敗しました"; }));
     stopButton.addEventListener("click", () => { if (recorder?.state === "recording") recorder.stop(); });
     resetButton.addEventListener("click", reset);
+    speakButton.addEventListener("click", () => {
+      if (!("speechSynthesis" in window)) {
+        status.textContent = "このブラウザは音声試聴に対応していません";
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(narration);
+      utterance.lang = "ja-JP";
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+      const japaneseVoice = window.speechSynthesis.getVoices().find((voice) => voice.lang.toLowerCase().startsWith("ja"));
+      if (japaneseVoice) utterance.voice = japaneseVoice;
+      utterance.onstart = () => { status.textContent = "ナレーション試聴中"; };
+      utterance.onend = () => { status.textContent = `待機中 ${formatTime(currentTime)} / 2:30`; };
+      window.speechSynthesis.speak(utterance);
+    });
     loadImages().then(draw).catch(() => { status.textContent = "素材の読み込みに失敗しました"; });
   </script>
 </body>
