@@ -2,7 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-const root = process.cwd();
+const root = path.resolve(process.cwd());
 const port = Number(process.env.PORT || 4173);
 const types = {
   ".html": "text/html; charset=utf-8",
@@ -14,9 +14,10 @@ const types = {
 http.createServer((req, res) => {
   let pathname = decodeURIComponent(req.url.split("?")[0]);
   if (pathname === "/" || pathname.endsWith("/")) pathname += "index.html";
-  const file = path.join(root, pathname);
+  const file = path.resolve(root, `.${pathname}`);
+  const relative = path.relative(root, file);
 
-  if (!file.startsWith(root)) {
+  if (relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
     res.writeHead(403);
     res.end("Forbidden");
     return;

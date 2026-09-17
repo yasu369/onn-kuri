@@ -8,7 +8,13 @@
 node serve.js
 ```
 
-ブラウザで `http://127.0.0.1:4174` を開いて確認できます。
+ブラウザで `http://127.0.0.1:4173` を開いて確認できます。
+
+更新前に、公開ページの共通要素・相対パス・予約リンク・低用量ピルの在庫表示・note記事数を確認します。
+
+```powershell
+node tools/audit-site.mjs
+```
 
 ## GitHub Pages
 
@@ -24,7 +30,7 @@ node serve.js
 ## 外部連携
 
 - 予約ボタンは `config.js` の `lineOfficialUrl` にURLを入れると、LINE公式アカウントへ遷移します。
-- トップページのお知らせは `news.json` を表示します。
+- トップページの公式note欄は `news.json` の最新5記事を表示します。
 - `config.js` の `noteRssUrl` にnoteのRSS URLを入れると、GitHub Actionsが1時間ごとに `news.json` を更新します。
 
 ## セキュリティ方針
@@ -51,7 +57,7 @@ git config user.email "ユーザーID+ユーザー名@users.noreply.github.com"
 - `/flow/` ご利用の流れ
 - `/diet/` ダイエット・サポート
 - `/stomach/` 整腸・胃薬
-- `/pill/` 低容量ピル
+- `/pill/` 低用量ピル
 - `/ed/` ED薬
 - `/aga/` AGA
 - `/beauty/` 保湿剤・美容薬

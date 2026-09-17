@@ -14,19 +14,19 @@ nav?.querySelectorAll("a").forEach((link) => {
   });
 });
 
+const subject = encodeURIComponent(config.reservationSubject || "オンライン診療予約");
+
+document.querySelectorAll("[data-config-reservation]").forEach((link) => {
+  if (config.lineOfficialUrl) {
+    link.href = config.lineOfficialUrl;
+    link.target = "_blank";
+    link.rel = "noopener";
+  } else if (config.contactEmail) {
+    link.href = `mailto:${config.contactEmail}?subject=${subject}`;
+  }
+});
+
 if (config.contactEmail) {
-  const subject = encodeURIComponent(config.reservationSubject || "オンライン診療予約");
-
-  document.querySelectorAll("[data-config-reservation]").forEach((link) => {
-    if (config.lineOfficialUrl) {
-      link.href = config.lineOfficialUrl;
-      link.target = "_blank";
-      link.rel = "noopener";
-    } else {
-      link.href = `mailto:${config.contactEmail}?subject=${subject}`;
-    }
-  });
-
   document.querySelectorAll("[data-config-contact-form]").forEach((form) => {
     form.action = `mailto:${config.contactEmail}`;
   });
@@ -41,10 +41,10 @@ if (notePostsRoot && config.noteNewsJsonUrl) {
       if (!Array.isArray(items) || items.length === 0) return;
 
       notePostsRoot.innerHTML = items.slice(0, 5).map((item) => {
-        const date = item.date || "";
+        const date = escapeHtml(item.date || "");
         const displayDate = date.replaceAll("-", ".");
         const title = escapeHtml(item.title || "note更新");
-        const url = safeExternalUrl(item.url);
+        const url = escapeHtml(safeExternalUrl(item.url));
 
         return `
           <article>
@@ -69,7 +69,8 @@ function escapeHtml(value) {
 function safeExternalUrl(value) {
   try {
     const url = new URL(value);
-    return ["https:", "http:"].includes(url.protocol) ? url.href : "#";
+    const isNoteHost = url.hostname === "note.com" || url.hostname.endsWith(".note.com");
+    return url.protocol === "https:" && isNoteHost ? url.href : "#";
   } catch {
     return "#";
   }

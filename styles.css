@@ -493,6 +493,7 @@ p {
   font-size: 13px;
   font-weight: 700;
   min-width: 0;
+  width: 100%;
 }
 
 .footer-links a {
@@ -505,12 +506,15 @@ p {
   flex-wrap: wrap;
   gap: 4px 18px;
   max-width: 100%;
+  min-width: 0;
   font-size: 14px;
   line-height: 1.7;
 }
 
 .footer-info span {
   display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .page-hero {
@@ -582,6 +586,8 @@ p {
 .table-wrap {
   position: relative;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   border: 1px solid var(--line);
   border-radius: 8px;
 }
@@ -849,6 +855,11 @@ tr:last-child td {
     justify-content: flex-start;
   }
 
+  .footer-links,
+  .footer-info {
+    width: 100%;
+  }
+
   .footer-links a {
     white-space: normal;
   }
@@ -866,7 +877,7 @@ tr:last-child td {
   }
 
   .site-nav {
-    inset-top: 68px;
+    top: 68px;
   }
 
   .hero {
