@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "audit:site": "node tools/audit-site.mjs",
+    "audit:fixtures": "node tools/audit-site-fixtures.mjs",
+    "audit:browser": "node tools/audit-site-browser.mjs",
+    "audit:browser-fixtures": "node tools/audit-site-browser-fixtures.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}

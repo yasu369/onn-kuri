@@ -1,0 +1,54 @@
+name: Audit site
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install audit dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: Run site audit
+        id: site-audit
+        continue-on-error: true
+        run: node tools/audit-site.mjs
+
+      - name: Run audit fixtures
+        id: static-fixtures
+        continue-on-error: true
+        run: node tools/audit-site-fixtures.mjs
+
+      - name: Run browser audit
+        id: browser-audit
+        continue-on-error: true
+        run: node tools/audit-site-browser.mjs
+
+      - name: Run browser audit fixtures
+        id: browser-fixtures
+        continue-on-error: true
+        run: node tools/audit-site-browser-fixtures.mjs
+
+      - name: Fail when any audit failed
+        if: always() && (steps.site-audit.outcome == 'failure' || steps.static-fixtures.outcome == 'failure' || steps.browser-audit.outcome == 'failure' || steps.browser-fixtures.outcome == 'failure')
+        run: exit 1

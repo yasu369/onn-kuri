@@ -1,5 +1,6 @@
 .repo-git/
 .git/
+node_modules/
 desktop-preview.png
 mobile-preview.png
 double-k-ips-cell-bank/
