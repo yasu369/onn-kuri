@@ -186,6 +186,7 @@ img {
 
 .hero-visual img {
   width: 100%;
+  height: auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 26px;
@@ -353,6 +354,7 @@ p {
 
 .menu-grid img {
   width: 100%;
+  height: auto;
   aspect-ratio: 16 / 10;
   object-fit: cover;
   border-radius: 8px;
