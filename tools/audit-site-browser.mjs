@@ -14,11 +14,6 @@ const targets = [
     label: "index.html/ダイエット",
     selector: 'a[href="diet/"]',
     tokens: ["マンジャロ", "4本", "¥19,800〜"]
-  },
-  {
-    label: "index.html/低用量ピル",
-    selector: 'a[href="pill/"]',
-    tokens: ["低用量ピル", "現在入荷待ち"]
   }
 ];
 

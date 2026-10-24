@@ -51,7 +51,6 @@ function assertBrowserResult(name, result, expectedPass, fragments = []) {
 }
 
 const dietMarker = "<small>マンジャロ4本 ¥19,800〜</small>";
-const pillMarker = "<small>現在入荷待ち</small>";
 
 const cases = [
   {
@@ -403,35 +402,6 @@ const cases = [
       '<small style="visibility:hidden;visibility:invalid">マンジャロ4本 ¥19,800〜</small>'
     )
   },
-  {
-    name: "browser pill hidden sibling",
-    expectedPass: true,
-    mutate: (directory) => replaceOnce(
-      path.join(directory, "index.html"),
-      pillMarker,
-      '<span hidden></span>' + pillMarker
-    )
-  },
-  {
-    name: "browser pill status hidden",
-    expectedPass: false,
-    fragments: ["index.html/低用量ピル", "visibility mismatch", "現在入荷待ち", "hidden"],
-    mutate: (directory) => replaceOnce(
-      path.join(directory, "index.html"),
-      pillMarker,
-      "<small hidden>現在入荷待ち</small>"
-    )
-  },
-  {
-    name: "browser pill ancestor hidden",
-    expectedPass: false,
-    fragments: ["index.html/低用量ピル", "visibility mismatch", "hidden"],
-    mutate: (directory) => replaceOnce(
-      path.join(directory, "index.html"),
-      '<div class="menu-grid">',
-      '<div class="menu-grid" hidden>'
-    )
-  }
 ];
 
 for (const testCase of cases) {

@@ -204,17 +204,6 @@ const cases = [
     }
   },
   {
-    name: "pill stock changed to a price",
-    fragments: ["pill/低用量ピル", "入荷待ち", "¥1,000"],
-    mutate: (directory) => {
-      replaceOnce(
-        path.join(directory, "pill/index.html"),
-        "<td>入荷待ち</td>",
-        "<td>¥1,000</td>"
-      );
-    }
-  },
-  {
     name: "unmapped price row added",
     fragments: ["beauty/美容", "unexpected row", "未知の薬", "¥1"],
     mutate: (directory) => {
@@ -368,15 +357,6 @@ const cases = [
     }
   },
   {
-    name: "top pill price with unrelated waiting text",
-    fragments: ["index.html/低用量ピル", "scoped summary", "現在入荷待ち", "¥1,000"],
-    mutate: (directory) => {
-      const filePath = path.join(directory, "index.html");
-      replaceOnce(filePath, "<small>現在入荷待ち</small>", "<small>¥1,000</small>");
-      insertBeforeBodyEnd(filePath, "<p>別商品の現在入荷待ち</p>");
-    }
-  },
-  {
     name: "top diet price hidden",
     browser: true,
     fragments: ["index.html/ダイエット", "visibility", "visible", "hidden"],
@@ -433,30 +413,6 @@ const cases = [
         path.join(directory, "index.html"),
         "<small>マンジャロ4本 ¥19,800〜</small>",
         '<small style="opacity:0.0">マンジャロ4本 ¥19,800〜</small>'
-      );
-    }
-  },
-  {
-    name: "top pill status hidden",
-    browser: true,
-    fragments: ["index.html/低用量ピル", "visibility", "visible", "hidden"],
-    mutate: (directory) => {
-      replaceOnce(
-        path.join(directory, "index.html"),
-        "<small>現在入荷待ち</small>",
-        "<small hidden>現在入荷待ち</small>"
-      );
-    }
-  },
-  {
-    name: "top pill ancestor hidden",
-    browser: true,
-    fragments: ["index.html/低用量ピル", "visibility", "visible", "hidden"],
-    mutate: (directory) => {
-      replaceOnce(
-        path.join(directory, "index.html"),
-        '<div class="menu-grid">',
-        '<div class="menu-grid" hidden>'
       );
     }
   },

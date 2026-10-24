@@ -8,9 +8,7 @@ const publicPages = [
   "flow/index.html",
   "diet/index.html",
   "stomach/index.html",
-  "pill/index.html",
   "ed/index.html",
-  "aga/index.html",
   "beauty/index.html",
   "contact/index.html",
   "limited-info/index.html",
@@ -18,17 +16,16 @@ const publicPages = [
   "terms/index.html",
   "profile/index.html"
 ];
-const categories = ["diet", "stomach", "pill", "ed", "aga", "beauty"];
+const categories = ["diet", "stomach", "ed", "beauty"];
+const temporarilyUnavailablePages = ["pill/index.html", "aga/index.html"];
 const expectedTableCounts = new Map([
   ["index.html", 0],
-  ["pricing/index.html", 11],
+  ["pricing/index.html", 9],
   ["diet/index.html", 6],
   ["stomach/index.html", 1],
-  ["pill/index.html", 1],
   ["ed/index.html", 1],
-  ["aga/index.html", 1],
   ["beauty/index.html", 1],
-  ["limited-info/index.html", 7]
+  ["limited-info/index.html", 6]
 ]);
 const errors = [];
 const warnings = [];
@@ -433,26 +430,6 @@ function compareLimitedKampo() {
   }
 }
 
-function compareLimitedPill() {
-  const source = getTable("pricing/index.html", 7, "limited-info/低用量ピル");
-  const target = getTable("limited-info/index.html", 6, "limited-info/低用量ピル");
-  if (!source || !target) return;
-
-  const sourceRows = source.slice(1);
-  if (sourceRows.some((row) => !row.some((cell) => cell === "入荷待ち"))) {
-    addMismatch("pricing/index.html/低用量ピル", "stock status", "all plans are 入荷待ち", sourceRows);
-  }
-
-  const expected = ["トリキュラー28", "入荷待ち（1か月分）"];
-  if (target.length !== 1) {
-    addMismatch("limited-info/低用量ピル", "row count", 1, target.length);
-  }
-  const actual = target[0] || [];
-  if (!sameArray(actual, expected)) {
-    addMismatch("limited-info/低用量ピル", "mapped row", expected, actual);
-  }
-}
-
 function elementPattern(tag, className, flags) {
   const escapedClass = className.replace(/[.*+?^$()|[\]\\{}]/g, "\\$&");
   return new RegExp(
@@ -520,7 +497,6 @@ function checkTopSummaries() {
     ? "ダイエットマンジャロ" + minimumMounjaro.quantity + " " + minimumMounjaro.price + "〜"
     : "ダイエットマンジャロ4本 ¥19,800〜";
   const dietAnchors = [...html.matchAll(/<a\b[^>]*href="diet\/"[^>]*>([\s\S]*?)<\/a>/gi)];
-  const pillAnchors = [...html.matchAll(/<a\b[^>]*href="pill\/"[^>]*>([\s\S]*?)<\/a>/gi)];
 
   if (dietAnchors.length !== 1) {
     addMismatch("index.html/ダイエット", "summary link count", 1, dietAnchors.length);
@@ -536,14 +512,6 @@ function checkTopSummaries() {
     }
   }
 
-  if (pillAnchors.length !== 1) {
-    addMismatch("index.html/低用量ピル", "summary link count", 1, pillAnchors.length);
-  } else {
-    const actual = stripTags(pillAnchors[0][0]);
-    if (actual !== "低用量ピル現在入荷待ち") {
-      addMismatch("index.html/低用量ピル", "scoped summary", "低用量ピル現在入荷待ち", actual);
-    }
-  }
 
   const noticeBlocks = elementsByClass(html, "section", "notice-band");
   if (noticeBlocks.length !== 1) {
@@ -603,7 +571,6 @@ function checkOutsideTablePrices() {
       remaining = removeElementsByClass(remaining, "section", "benefit-strip");
       remaining = removeElementsByClass(remaining, "section", "cta-section");
       remaining = removeAnchorsByHref(remaining, "diet/");
-      remaining = removeAnchorsByHref(remaining, "pill/");
     }
     const tokens = priceDisplayTokens(stripTags(remaining));
     if (tokens.length > 0) {
@@ -654,6 +621,12 @@ for (const relativePath of publicPages) {
   }
 }
 
+for (const relativePath of temporarilyUnavailablePages) {
+  if (fs.existsSync(path.join(root, relativePath))) {
+    errors.push(relativePath.replace(/\/index\.html$/, "/") + ": temporarily unavailable page must not be published");
+  }
+}
+
 const pricing = read("pricing/index.html");
 for (const category of categories) {
   if (!pricing.includes('id="' + category + '"')) errors.push("pricing/: missing #" + category + " anchor");
@@ -661,14 +634,6 @@ for (const category of categories) {
   if (!page.includes("pricing/#" + category)) errors.push(category + "/: missing pricing anchor link");
 }
 
-const pill = read("pill/index.html");
-const pillPriceSection = pill.match(/<section class="section price-section">([\s\S]*?)<\/section>/)?.[1] || "";
-const pillRows = [...pillPriceSection.matchAll(/<tr>([\s\S]*?)<\/tr>/g)]
-  .map((match) => [...match[1].matchAll(/<td>([\s\S]*?)<\/td>/g)].map((cell) => stripTags(cell[1])))
-  .filter((row) => row.length > 0);
-if (pillRows.length === 0 || pillRows.some((row) => row.at(-1) !== "入荷待ち")) {
-  errors.push("pill/: every price row must say 入荷待ち");
-}
 
 const news = JSON.parse(read("news.json"));
 if (!Array.isArray(news) || news.length === 0 || news.length > 5) {
@@ -683,10 +648,8 @@ const exactMappings = [
   ["pricing/index.html", 4, "diet/index.html", 4, "diet/SGLT2"],
   ["pricing/index.html", 5, "diet/index.html", 5, "diet/その他ダイエット"],
   ["pricing/index.html", 6, "stomach/index.html", 0, "stomach/胃腸"],
-  ["pricing/index.html", 7, "pill/index.html", 0, "pill/低用量ピル"],
-  ["pricing/index.html", 8, "ed/index.html", 0, "ed/ED"],
-  ["pricing/index.html", 9, "aga/index.html", 0, "aga/AGA"],
-  ["pricing/index.html", 10, "beauty/index.html", 0, "beauty/美容"]
+  ["pricing/index.html", 7, "ed/index.html", 0, "ed/ED"],
+  ["pricing/index.html", 8, "beauty/index.html", 0, "beauty/美容"]
 ];
 for (const [sourcePath, sourceIndex, targetPath, targetIndex, label] of exactMappings) {
   compareExactTables({ sourcePath, sourceIndex, targetPath, targetIndex, label });
@@ -710,7 +673,6 @@ compareExactTables({
 compareLimitedSglt();
 compareLimitedOtherDiet();
 compareLimitedKampo();
-compareLimitedPill();
 checkTableInventory();
 checkTopSummaries();
 checkOutsideTablePrices();
@@ -725,8 +687,8 @@ if (errors.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(
-    "Audit passed: " + publicPages.length + " public pages, " + pillRows.length + " pill price rows, " +
-    news.length + " note posts, " + exactMappings.length + " exact pricing mappings."
+    "Audit passed: " + publicPages.length + " public pages, " + news.length +
+    " note posts, " + exactMappings.length + " exact pricing mappings."
   );
   if (warnings.length > 0) {
     console.warn("Explicit audit exceptions/warnings:");
